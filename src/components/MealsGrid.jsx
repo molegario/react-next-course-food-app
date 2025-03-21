@@ -1,10 +1,14 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { getMeals } from "../http";
 import { useState } from "react";
 import MealItem from "./MealItem";
+import { CartContext } from "../store/cart-context";
 
 const MealsGrid = () => {
   const [allMeals, setAllMeals] = useState([]);
+  const {
+    setMenuPrices,
+  } = useContext(CartContext);
 
   useEffect(
     () => {
@@ -12,6 +16,7 @@ const MealsGrid = () => {
         try {
           const Meals = await getMeals();
           setAllMeals(Meals);
+          setMenuPrices(Meals.map(item => ({ id: item.id, name: item.name, price: item.price })));
           console.log(Meals);
         } catch (error) {
           console.error(error?.message || "An error occurred retreiving meals.");
@@ -27,7 +32,7 @@ const MealsGrid = () => {
       {
         allMeals.map(
           (item) => (
-            <MealItem key={item.id} item={item} />
+            <MealItem key={item.id} {...item} />
           )
         )
       }
