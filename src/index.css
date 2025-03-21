@@ -150,6 +150,8 @@ h1 {
 
 .cart-item p {
   margin: 0;
+  gap: 1rem;
+  display: flex;
 }
 
 .cart-item-actions {
