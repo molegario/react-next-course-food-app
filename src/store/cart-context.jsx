@@ -5,16 +5,17 @@ import Cart from "../components/Cart";
 export const CartContext = createContext({
   cart: [],
   menu: [],
+  stage: '',
   showCartModal: false,
   addToCart: (id) => {},
   removeFromCart: (id) => {},
   clearCart: () => {},
   showCart: () => {},
   hideCart: () => {},
-  postOrder: () => {},
   setMenuPrices: (menu) => {},
   getMenuItemById: (id) => {},
   getTotalCartPrice: () => {},
+  setStageToVerified: () => {},
 });
 
 const cartReducer = (state, action) => {
@@ -30,6 +31,7 @@ const cartReducer = (state, action) => {
     return {
       ...state,
       showCart: false,
+      stage: '',
     };
   }
 
@@ -95,6 +97,13 @@ const cartReducer = (state, action) => {
     };
   }
 
+  if (action?.type === "SET_STAGE_TO_VERIFIED") {
+    return {
+      ...state,
+      stage: 'VERIFIED',
+    };
+  }
+
   return {
     ...state,
   };
@@ -109,6 +118,7 @@ const CartProvider = ({
   const [cartState, cartDispatch] = useReducer(cartReducer, {
     menuPrices: [],
     cart: [],
+    stage: '',
     showCart: false,
   });
 
@@ -132,11 +142,6 @@ const CartProvider = ({
     cartDispatch({ type: "REMOVE_ITEM_BY_ID", payload: { id } });
   };
 
-  const postOrderHandler = () => {
-    console.log("Order posted");
-    closeCartHandler();
-  };
-
   const setMenuPricesHandler = (menu) => {
     cartDispatch({ type: "SET_MENU_PRICES", payload: { menu } });
   };
@@ -146,31 +151,36 @@ const CartProvider = ({
   };
 
   const getTotalCartPrice = () => {
-      return cartState.cart.reduce(
-        (acc, item) => {
-          const menuItem = getMenuItemById(item.id);
-          if (menuItem) {
-            return acc + parseFloat(menuItem.price) * item.amount;
-          } else {
-            return acc;
-          }
-        },
-        0
-      )
-    };
+    return cartState.cart.reduce(
+      (acc, item) => {
+        const menuItem = getMenuItemById(item.id);
+        if (menuItem) {
+          return acc + parseFloat(menuItem.price) * item.amount;
+        } else {
+          return acc;
+        }
+      },
+      0
+    )
+  };
+
+  const setStageToVerified = () => {
+    cartDispatch({ type: "SET_STAGE_TO_VERIFIED" });
+  }
 
   const cartCtx = {
     cart: cartState.cart,
     menu: cartState.menuPrices,
+    stage: cartState.stage,
     showCartModal: cartState.showCart,
     showCart: cartClickHandler,
     hideCart: closeCartHandler,
-    postOrder: postOrderHandler,
     addToCart: addToCartHandler,
     removeFromCart: removeFromCartHandler,
     setMenuPrices: setMenuPricesHandler,
     getMenuItemById,
     getTotalCartPrice,
+    setStageToVerified,
   };
 
   return (
