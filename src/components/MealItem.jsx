@@ -2,22 +2,22 @@ import { memo } from "react";
 import AddButton from "./AddButton";
 import { priceFormatter } from "../utils/formatter";
 
-const MealItem = memo(({ id, name, description, price, image }) => {
+const MealItem = memo(({item}) => {
 
 
   return (
     <li className="meal-item">
       <article>
-        <img src={`http://localhost:3000/${image}`} alt={name} />
+        <img src={`http://localhost:3000/${item.image}`} alt={item.name} />
         <div>
-          <h3>{name}</h3>
-          <span className="meal-item-price">{priceFormatter(price)}</span>
+          <h3>{item.name}</h3>
+          <span className="meal-item-price">{priceFormatter(item.price)}</span>
           <p className="meal-item-description">
-            <span>{description}</span>
+            <span>{item.description}</span>
           </p>
         </div>
         <p className="meal-item-actions">
-          <AddButton id={id} />
+          <AddButton item={item} />
         </p>
       </article>
     </li>

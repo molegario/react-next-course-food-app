@@ -1,28 +1,23 @@
-import { createContext, useCallback, useReducer, useRef } from "react";
+import { createContext, useReducer, useRef } from "react";
 import Modal from "../components/UI/Modal";
 import Cart from "../components/Cart";
 
 export const CartContext = createContext({
   cart: [],
-  menu: [],
-  stage: '',
+  stage: "",
   showCartModal: false,
-  addToCart: (id) => {},
+  addItemToCart: (item) => {},
   removeFromCart: (id) => {},
   clearCart: () => {},
   showCart: () => {},
   hideCart: () => {},
-  setMenuPrices: (menu) => {},
-  getMenuItemById: (id) => {},
   getTotalCartPrice: () => {},
   setStageToVerified: () => {},
   setStageToSucceeded: () => {},
-  getDetailedCartItems: () => {},
 });
 
 const cartReducer = (state, action) => {
-
-  if(action?.type==="OPEN_CART_MODAL") {
+  if (action?.type === "OPEN_CART_MODAL") {
     return {
       ...state,
       showCart: true,
@@ -33,22 +28,22 @@ const cartReducer = (state, action) => {
     return {
       ...state,
       showCart: false,
-      stage: '',
+      stage: "",
     };
   }
 
-  if(action?.type === "CLEAR_CART") {
+  if (action?.type === "CLEAR_CART") {
     return {
       ...state,
       cart: [],
     };
   }
 
-  if (action?.type === "ADD_ITEM_BY_ID") {
+  if (action?.type === "ADD_ITEM_TO_CART") {
     const existingItemIndex = state.cart?.findIndex(
-      (item) => item.id === action.payload.id
+      (item) => item.id === action.payload.item.id
     );
-    if(existingItemIndex !== -1) {
+    if (existingItemIndex !== -1) {
       const updatedCart = state.cart.map((item, index) => {
         if (index === existingItemIndex) {
           return {
@@ -65,7 +60,7 @@ const cartReducer = (state, action) => {
     } else {
       return {
         ...state,
-        cart: [...state.cart, { id: action.payload.id, amount: 1 }],
+        cart: [...state.cart, { ...action.payload.item, amount: 1 }],
       };
     }
   }
@@ -99,17 +94,10 @@ const cartReducer = (state, action) => {
     }
   }
 
-  if (action?.type === "SET_MENU_PRICES") {
-    return {
-      ...state,
-      menuPrices: action.payload.menu,
-    };
-  }
-
   if (action?.type === "SET_STAGE_TO_VERIFIED") {
     return {
       ...state,
-      stage: 'VERIFIED',
+      stage: "VERIFIED",
     };
   }
 
@@ -125,16 +113,12 @@ const cartReducer = (state, action) => {
   };
 };
 
-const CartProvider = ({
-  children
-}) => {
-
+const CartProvider = ({ children }) => {
   const cartModalRef = useRef();
 
   const [cartState, cartDispatch] = useReducer(cartReducer, {
-    menuPrices: [],
     cart: [],
-    stage: '',
+    stage: "",
     showCart: false,
   });
 
@@ -144,81 +128,54 @@ const CartProvider = ({
   };
 
   const closeCartHandler = () => {
-    if(cartState.showCart) {
+    if (cartState.showCart) {
       cartModalRef.current.close();
       cartDispatch({ type: "CLOSE_CART_MODAL" });
     }
   };
 
-  const addToCartHandler = (id) => {
-    cartDispatch({ type: "ADD_ITEM_BY_ID", payload: { id } });
+  const addItemToCart = (item) => {
+    cartDispatch({ type: "ADD_ITEM_TO_CART", payload: { item } });
   };
 
   const removeFromCartHandler = (id) => {
     cartDispatch({ type: "REMOVE_ITEM_BY_ID", payload: { id } });
   };
 
-  const setMenuPricesHandler = (menu) => {
-    cartDispatch({ type: "SET_MENU_PRICES", payload: { menu } });
-  };
-
-  const getMenuItemById = (id) => {
-    return cartState.menuPrices.find((item) => item.id === id);
-  };
-
   const getTotalCartPrice = () => {
-    return cartState.cart.reduce(
-      (acc, item) => {
-        const menuItem = getMenuItemById(item.id);
-        if (menuItem) {
-          return acc + parseFloat(menuItem.price) * item.amount;
-        } else {
-          return acc;
-        }
-      },
-      0
-    )
+    return cartState.cart.reduce((acc, item) => {
+      if (item) {
+        return acc + parseFloat(item.price) * item.amount;
+      } else {
+        return acc;
+      }
+    }, 0);
   };
 
   const setStageToVerified = () => {
     cartDispatch({ type: "SET_STAGE_TO_VERIFIED" });
-  }
+  };
 
   const setStageToSucceeded = () => {
     cartDispatch({ type: "SET_STAGE_TO_SUCCEEDED" });
-  }
+  };
 
   const clearCartHandler = () => {
     cartDispatch({ type: "CLEAR_CART" });
   };
 
-  const getDetailedCartItems = () => {
-    return cartState.cart.map((item) => {
-      const menuItem = getMenuItemById(item.id);
-      return {
-        ...item,
-        name: menuItem.name,
-        price: menuItem.price,
-      };
-    });
-  };
-
   const cartCtx = {
     cart: cartState.cart,
-    menu: cartState.menuPrices,
     stage: cartState.stage,
     showCartModal: cartState.showCart,
     showCart: cartClickHandler,
     hideCart: closeCartHandler,
-    addToCart: addToCartHandler,
+    addItemToCart,
     removeFromCart: removeFromCartHandler,
-    setMenuPrices: setMenuPricesHandler,
-    getMenuItemById,
     getTotalCartPrice,
     setStageToVerified,
     setStageToSucceeded,
     clearCart: clearCartHandler,
-    getDetailedCartItems,
   };
 
   return (

@@ -1,17 +1,16 @@
-import { memo, useContext } from "react";
+import { memo, useContext, useActionState } from "react";
 import { CartContext } from "../store/cart-context";
-import { useActionState } from "react";
 import { priceFormatter } from "../utils/formatter";
 
-const CartItem = memo(({ id, name, price, amount }) => {
-  const { addToCart, removeFromCart } = useContext(CartContext);
+const CartItem = memo(({item}) => {
+  const { addItemToCart, removeFromCart } = useContext(CartContext);
 
   const increaseAmountAction = () => {
-    addToCart(id);
+    addItemToCart(item);
   };
 
   const decreaseAmountAction = () => {
-    removeFromCart(id);
+    removeFromCart(item.id);
   };
 
   const [incrAmountState, incrAmountAction] = useActionState(
@@ -27,15 +26,15 @@ const CartItem = memo(({ id, name, price, amount }) => {
     <li className="cart-item">
       <div>
         <p>
-          <span>{name}</span>
+          <span>{item.name}</span>
           <span>
-            {amount} x {priceFormatter(price)}
+            {item.amount} x {priceFormatter(item.price)}
           </span>
         </p>
       </div>
       <form className="cart-item-actions">
         <button formAction={decrAmountAction}>-</button>
-        <span>{amount}</span>
+        <span>{item.amount}</span>
         <button formAction={incrAmountAction}>+</button>
       </form>
     </li>

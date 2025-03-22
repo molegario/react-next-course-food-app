@@ -4,19 +4,16 @@ import CartItem from "./CartItem";
 import { priceFormatter } from "../utils/formatter";
 
 const VerifyCartPanel = () => {
+  const { cart, getTotalCartPrice } = useContext(CartContext);
 
-  const { getDetailedCartItems, getTotalCartPrice } =
-    useContext(CartContext);
-
-  const cartItems = getDetailedCartItems();
   const totalCartPrice = getTotalCartPrice();
 
   return (
     <>
       <h2>Your Cart</h2>
       <ul>
-        {cartItems.map((item) => (
-          <CartItem key={item.id} {...item} />
+        {cart.map((item) => (
+          <CartItem key={item.id} item={item} />
         ))}
       </ul>
       <div className="cart-total">
