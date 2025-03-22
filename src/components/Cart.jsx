@@ -93,7 +93,7 @@ const Cart = () => {
   return (
     <div className="cart">
       {stage === "" && <VerifyCartPanel />}
-      <form method="dialog" noValidate>
+      <form method="dialog">
         {stage === "VERIFIED" && (
           <CheckoutPanel checkoutState={checkoutState} />
         )}

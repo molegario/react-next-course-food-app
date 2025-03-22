@@ -9,6 +9,7 @@ const Input = ({
       <input
         id={id}
         {...rest}
+        required
       />
     </p>
   );
