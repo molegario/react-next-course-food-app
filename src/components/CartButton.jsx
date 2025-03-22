@@ -1,13 +1,14 @@
 import { useContext } from "react";
 import { CartContext } from "../store/cart-context";
+import Button from "./UI/Button";
 
 const CartButton = () => {
   const { cart, showCart } = useContext(CartContext);
 
   return (
-    <button className="text-button" onClick={showCart}>
+    <Button onClick={showCart} textOnly>
       Cart ({cart?.length ?? 0})
-    </button>
+    </Button>
   );
 };
 

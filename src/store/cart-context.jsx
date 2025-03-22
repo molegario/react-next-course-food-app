@@ -1,5 +1,5 @@
 import { createContext, useCallback, useReducer, useRef } from "react";
-import Modal from "../components/Modal";
+import Modal from "../components/UI/Modal";
 import Cart from "../components/Cart";
 
 export const CartContext = createContext({
@@ -49,8 +49,8 @@ const cartReducer = (state, action) => {
       (item) => item.id === action.payload.id
     );
     if(existingItemIndex !== -1) {
-      const updatedCart = [...state.cart].map((item, index) => {
-        if(index === existingItemIndex) {
+      const updatedCart = state.cart.map((item, index) => {
+        if (index === existingItemIndex) {
           return {
             ...item,
             amount: item.amount + 1,
@@ -76,13 +76,13 @@ const cartReducer = (state, action) => {
     );
     if (existingItemIndex !== -1) {
       if (state.cart[existingItemIndex].amount === 1) {
-        const updatedCart = [...state.cart].filter((item, index) => index !== existingItemIndex);
+        const updatedCart = state.cart.toSpliced(existingItemIndex, 1);
         return {
           ...state,
           cart: updatedCart,
         };
       } else {
-        const updatedCart = [...state.cart].map((item, index) => {
+        const updatedCart = state.cart.map((item, index) => {
           if (index === existingItemIndex) {
             return {
               ...item,
@@ -119,7 +119,6 @@ const cartReducer = (state, action) => {
       stage: "SUCCEEDED",
     };
   }
-
 
   return {
     ...state,

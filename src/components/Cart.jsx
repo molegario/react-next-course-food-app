@@ -5,11 +5,12 @@ import { useActionState } from "react";
 import CheckoutPanel from "./CheckoutPanel";
 import validator from "validator";
 import SuccessPanel from "./SuccessPanel";
-import { postOrder } from "../http";
+import { postOrder } from "../utils/http";
+import Button from "./UI/Button";
 
 const checkForErrors = (enteredValues) => {
-  const errors = Object.entries(enteredValues).map(
-    ([key, value]) => {
+  const errors = Object.entries(enteredValues)
+    .map(([key, value]) => {
       if (key === "name" && !validator.isLength(value, { min: 3 })) {
         return "Name must be 3 characters or longer.";
       }
@@ -19,26 +20,21 @@ const checkForErrors = (enteredValues) => {
       if (key === "street" && !validator.isLength(value, { min: 5 })) {
         return "Street must be 5 characters or longer.";
       }
-      if (key === "postal-code" && !validator.isPostalCode(value, 'CA')) {
+      if (key === "postal-code" && !validator.isPostalCode(value, "CA")) {
         return "Postal code is not a valid Canadian postal code.";
       }
-      if (key === "city" && !validator.isIn(value, ['Montreal', 'Laval'])) {
+      if (key === "city" && !validator.isIn(value, ["Montreal", "Laval"])) {
         return "City must be either Montreal or Laval.";
       }
-    }
-  ).filter(Boolean);
+    })
+    .filter(Boolean);
 
   return errors;
 };
 
 const Cart = () => {
-  const {
-    cart,
-    stage,
-    setStageToVerified,
-    setStageToSucceeded,
-    clearCart,
-  } = useContext(CartContext);
+  const { cart, stage, setStageToVerified, setStageToSucceeded, clearCart } =
+    useContext(CartContext);
 
   const ConfirmOrderAction = () => {
     setStageToVerified();
@@ -89,7 +85,10 @@ const Cart = () => {
   };
 
   const [confirmState, confirmAction] = useActionState(ConfirmOrderAction, {});
-  const [checkoutState, checkoutAction, checkoutPending] = useActionState(PostOrderAction, {errors: null});
+  const [checkoutState, checkoutAction, checkoutPending] = useActionState(
+    PostOrderAction,
+    { errors: null }
+  );
 
   return (
     <div className="cart">
@@ -98,23 +97,21 @@ const Cart = () => {
         {stage === "VERIFIED" && (
           <CheckoutPanel checkoutState={checkoutState} />
         )}
-        {
-          stage === "SUCCEEDED" && (
-            <SuccessPanel />
-          )
-        }
+        {stage === "SUCCEEDED" && <SuccessPanel />}
         <div className="modal-actions">
-          <button className={stage === "SUCCEEDED" ? "button" : "text-button"} disabled={checkoutPending}>
+          <Button
+            disabled={checkoutPending}
+            textOnly={stage !== "SUCCEEDED"}
+          >
             Close
-          </button>
+          </Button>
           {stage !== "SUCCEEDED" && (
-            <button
-              className="button"
+            <Button
               formAction={stage !== "VERIFIED" ? confirmAction : checkoutAction}
               disabled={checkoutPending || cart.length === 0}
             >
               {stage !== "VERIFIED" ? "Order" : "Submit Order"}
-            </button>
+            </Button>
           )}
         </div>
       </form>

@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { CartContext } from "../store/cart-context";
 import CartItem from "./CartItem";
+import { priceFormatter } from "../utils/formatter";
 
 const VerifyCartPanel = () => {
 
@@ -19,7 +20,7 @@ const VerifyCartPanel = () => {
         ))}
       </ul>
       <div className="cart-total">
-        <span>${totalCartPrice.toFixed(2)}</span>
+        <span>{priceFormatter(totalCartPrice)}</span>
       </div>
     </>
   );

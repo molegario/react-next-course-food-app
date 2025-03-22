@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { CartContext } from "../store/cart-context";
+import Button from "./UI/Button";
 
 const AddButton = ({id}) => {
   const { addToCart } = useContext(CartContext);
@@ -9,9 +10,9 @@ const AddButton = ({id}) => {
   };
 
   return (
-    <button className="button" onClick={addToCartHandler}>
+    <Button onClick={addToCartHandler}>
       Add to Cart
-    </button>
+    </Button>
   );
 };
 

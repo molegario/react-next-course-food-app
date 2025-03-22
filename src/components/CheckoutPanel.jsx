@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { CartContext } from "../store/cart-context";
-import Input from "./Input";
+import Input from "./UI/Input";
+import { priceFormatter } from "../utils/formatter";
 
 const CheckoutPanel = ({
   checkoutState,
@@ -17,7 +18,7 @@ const CheckoutPanel = ({
     <>
       <h2>Checkout</h2>
       <p>
-        Total Amount: <span>${totalCartPrice.toFixed(2)}</span>
+        Total Amount: <span>{priceFormatter(totalCartPrice)}</span>
       </p>
       <Input
         id="name"
