@@ -17,6 +17,7 @@ export const CartContext = createContext({
   getTotalCartPrice: () => {},
   setStageToVerified: () => {},
   setStageToSucceeded: () => {},
+  getDetailedCartItems: () => {},
 });
 
 const cartReducer = (state, action) => {
@@ -192,6 +193,17 @@ const CartProvider = ({
     cartDispatch({ type: "CLEAR_CART" });
   };
 
+  const getDetailedCartItems = () => {
+    return cartState.cart.map((item) => {
+      const menuItem = getMenuItemById(item.id);
+      return {
+        ...item,
+        name: menuItem.name,
+        price: menuItem.price,
+      };
+    });
+  };
+
   const cartCtx = {
     cart: cartState.cart,
     menu: cartState.menuPrices,
@@ -207,6 +219,7 @@ const CartProvider = ({
     setStageToVerified,
     setStageToSucceeded,
     clearCart: clearCartHandler,
+    getDetailedCartItems,
   };
 
   return (

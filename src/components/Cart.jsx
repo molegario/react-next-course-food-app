@@ -7,6 +7,30 @@ import validator from "validator";
 import SuccessPanel from "./SuccessPanel";
 import { postOrder } from "../http";
 
+const checkForErrors = (enteredValues) => {
+  const errors = Object.entries(enteredValues).map(
+    ([key, value]) => {
+      if (key === "name" && !validator.isLength(value, { min: 3 })) {
+        return "Name must be 3 characters or longer.";
+      }
+      if (key === "email" && !validator.isEmail(value)) {
+        return "Email is not valid.";
+      }
+      if (key === "street" && !validator.isLength(value, { min: 5 })) {
+        return "Street must be 5 characters or longer.";
+      }
+      if (key === "postal-code" && !validator.isPostalCode(value, 'CA')) {
+        return "Postal code is not a valid Canadian postal code.";
+      }
+      if (key === "city" && !validator.isIn(value, ['Montreal', 'Laval'])) {
+        return "City must be either Montreal or Laval.";
+      }
+    }
+  ).filter(Boolean);
+
+  return errors;
+};
+
 const Cart = () => {
   const {
     cart,
@@ -29,35 +53,16 @@ const Cart = () => {
       city: formData.get("city"),
     };
 
-    const errors = Object.entries(enteredValues).map(
-      ([key, value]) => {
-        if (key === "name" && !validator.isLength(value, { min: 3 })) {
-          return "Name must be 3 characters or longer.";
-        }
-        if (key === "email" && !validator.isEmail(value)) {
-          return "Email is not valid.";
-        }
-        if (key === "street" && !validator.isLength(value, { min: 5 })) {
-          return "Street must be 5 characters or longer.";
-        }
-        if (key === "postal-code" && !validator.isPostalCode(value, 'CA')) {
-          return "Postal code is not a valid Canadian postal code.";
-        }
-        if (key === "city" && !validator.isIn(value, ['Montreal', 'Laval'])) {
-          return "City must be either Montreal or Laval.";
-        }
-      }
-    ).filter(Boolean);
+    const errors = checkForErrors(enteredValues);
 
     if (errors.length === 0) {
-      const  order = {
+      const order = {
         customer: enteredValues,
         items: cart,
       };
 
       try {
         const confirmed = await postOrder(order);
-        console.log(confirmed);
 
         if (confirmed === "Order created!") {
           clearCart();
@@ -99,7 +104,7 @@ const Cart = () => {
           )
         }
         <div className="modal-actions">
-          <button className={stage === "SUCCEEDED" ? "button" : "text-button"}>
+          <button className={stage === "SUCCEEDED" ? "button" : "text-button"} disabled={checkoutPending}>
             Close
           </button>
           {stage !== "SUCCEEDED" && (

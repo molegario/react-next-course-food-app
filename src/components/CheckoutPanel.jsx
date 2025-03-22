@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { CartContext } from "../store/cart-context";
+import Input from "./Input";
 
 const CheckoutPanel = ({
   checkoutState,
@@ -18,57 +19,47 @@ const CheckoutPanel = ({
       <p>
         Total Amount: <span>${totalCartPrice.toFixed(2)}</span>
       </p>
-      <p className="control">
-        <label htmlFor="name">Full Name</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          defaultValue={enteredValues?.name}
-        />
-      </p>
-      <p className="control">
-        <label htmlFor="email">Email Address</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          defaultValue={enteredValues?.email}
-        />
-      </p>
-      <p className="control">
-        <label htmlFor="street">Street</label>
-        <input
-          type="text"
-          id="street"
-          name="street"
-          defaultValue={enteredValues?.street}
-        />
-      </p>
+      <Input
+        id="name"
+        type="text"
+        name="name"
+        labelText="Full Name"
+        defaultValue={enteredValues?.name}
+      />
+      <Input
+        id="email"
+        type="email"
+        name="email"
+        labelText="Email Address"
+        defaultValue={enteredValues?.email}
+      />
+      <Input
+        id="street"
+        type="text"
+        name="street"
+        labelText="Street"
+        defaultValue={enteredValues?.street}
+      />
       <div className="control-row">
-        <p className="control">
-          <label htmlFor="postalcode">Postal Code</label>
-          <input
-            type="text"
-            id="postal-code"
-            name="postal-code"
-            defaultValue={enteredValues?.["postal-code"]}
-          />
-        </p>
-        <p className="control">
-          <label htmlFor="city">City</label>
-          <input
-            type="text"
-            id="city"
-            name="city"
-            defaultValue={enteredValues?.city}
-          />
-        </p>
+        <Input
+          id="postal-code"
+          type="text"
+          name="postal-code"
+          labelText="Postal Code"
+          defaultValue={enteredValues?.["postal-code"]}
+        />
+        <Input
+          id="city"
+          type="text"
+          name="city"
+          labelText="City"
+          defaultValue={enteredValues?.city}
+        />
       </div>
       <ul>
         {errors &&
           errors.length > 0 &&
-          errors.map((error, index) => <li key={index}>{error}</li>)}
+          errors.map((error, index) => <li key={`error-${index}`}>{error}</li>)}
       </ul>
     </>
   );

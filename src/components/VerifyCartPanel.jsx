@@ -4,18 +4,10 @@ import CartItem from "./CartItem";
 
 const VerifyCartPanel = () => {
 
-  const { cart, getMenuItemById, getTotalCartPrice } =
+  const { getDetailedCartItems, getTotalCartPrice } =
     useContext(CartContext);
 
-  const cartItems = cart.map((item) => {
-    const menuItem = getMenuItemById(item.id);
-    return {
-      ...item,
-      name: menuItem.name,
-      price: menuItem.price,
-    };
-  });
-
+  const cartItems = getDetailedCartItems();
   const totalCartPrice = getTotalCartPrice();
 
   return (
