@@ -3,11 +3,11 @@ import { CartContext } from "../store/cart-context";
 import Button from "./UI/Button";
 
 const CartButton = () => {
-  const { cart, showCart } = useContext(CartContext);
+  const { getCartTotalItems, showCart } = useContext(CartContext);
 
   return (
     <Button onClick={showCart} textOnly>
-      Cart ({cart?.length ?? 0})
+      Cart ({getCartTotalItems()})
     </Button>
   );
 };

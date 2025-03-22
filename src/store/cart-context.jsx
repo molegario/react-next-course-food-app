@@ -14,6 +14,7 @@ export const CartContext = createContext({
   getTotalCartPrice: () => {},
   setStageToVerified: () => {},
   setStageToSucceeded: () => {},
+  getCartTotalItems: () => {},
 });
 
 const cartReducer = (state, action) => {
@@ -164,6 +165,16 @@ const CartProvider = ({ children }) => {
     cartDispatch({ type: "CLEAR_CART" });
   };
 
+  const getCartTotalItems = () => {
+    return cartState.cart.reduce((acc, item) => {
+      if (item) {
+        return acc + item.amount;
+      } else {
+        return acc;
+      }
+    }, 0);
+  };
+
   const cartCtx = {
     cart: cartState.cart,
     stage: cartState.stage,
@@ -176,6 +187,7 @@ const CartProvider = ({ children }) => {
     setStageToVerified,
     setStageToSucceeded,
     clearCart: clearCartHandler,
+    getCartTotalItems,
   };
 
   return (
