@@ -16,6 +16,7 @@ export const CartContext = createContext({
   getMenuItemById: (id) => {},
   getTotalCartPrice: () => {},
   setStageToVerified: () => {},
+  setStageToSucceeded: () => {},
 });
 
 const cartReducer = (state, action) => {
@@ -32,6 +33,13 @@ const cartReducer = (state, action) => {
       ...state,
       showCart: false,
       stage: '',
+    };
+  }
+
+  if(action?.type === "CLEAR_CART") {
+    return {
+      ...state,
+      cart: [],
     };
   }
 
@@ -104,6 +112,14 @@ const cartReducer = (state, action) => {
     };
   }
 
+  if (action?.type === "SET_STAGE_TO_SUCCEEDED") {
+    return {
+      ...state,
+      stage: "SUCCEEDED",
+    };
+  }
+
+
   return {
     ...state,
   };
@@ -168,6 +184,14 @@ const CartProvider = ({
     cartDispatch({ type: "SET_STAGE_TO_VERIFIED" });
   }
 
+  const setStageToSucceeded = () => {
+    cartDispatch({ type: "SET_STAGE_TO_SUCCEEDED" });
+  }
+
+  const clearCartHandler = () => {
+    cartDispatch({ type: "CLEAR_CART" });
+  };
+
   const cartCtx = {
     cart: cartState.cart,
     menu: cartState.menuPrices,
@@ -181,6 +205,8 @@ const CartProvider = ({
     getMenuItemById,
     getTotalCartPrice,
     setStageToVerified,
+    setStageToSucceeded,
+    clearCart: clearCartHandler,
   };
 
   return (
